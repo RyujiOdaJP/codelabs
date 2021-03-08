@@ -29,11 +29,13 @@ class MainActivity : AppCompatActivity() {
         @Suppress("UNUSED_VARIABLE")
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
+        // put back button
         val navController = this.findNavController(R.id.myNavHostFragment)
         NavigationUI.setupActionBarWithNavController(this, navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        // define back buttons behavior as attempting to navigate up in the navigation hierarchy.
         val navController = this.findNavController(R.id.myNavHostFragment)
         return navController.navigateUp()
     }
