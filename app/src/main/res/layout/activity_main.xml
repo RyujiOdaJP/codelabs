@@ -14,6 +14,17 @@
   ~ limitations under the License.
   -->
 
+<!--
+In the activity_main.xml layout file, the NavHostFragment is
+represented by a fragment element with the name
+android:name="androidx.navigation.fragment.NavHostFragment".
+-->
+
+<!--
+Layout that is represented in activity_main here is defined by
+app:navGraph="@navigation/navigation" .
+-->
+
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
