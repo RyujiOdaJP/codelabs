@@ -23,10 +23,8 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import com.example.android.advancedcoroutines.util.CacheOnSuccess
 import com.example.android.advancedcoroutines.utils.ComparablePair
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 /**
  * Repository module for handling data operations.
@@ -48,6 +46,8 @@ class PlantRepository private constructor(
             plantService.customPlantSortOrder()
         }
 
+    private val customSortFlow = plantsListSortOrderCache::getOrAwait.asFlow()
+
     /**
      * Fetch a list of [Plant]s from the database.
      * Returns a LiveData-wrapped List of Plants.
@@ -63,6 +63,11 @@ class PlantRepository private constructor(
     }
 
     val plantsFlow: Flow<List<Plant>> get() = plantDao.getPlantsFlow()
+        .combine(customSortFlow) { plants, sortOrder ->
+            plants.applySort(sortOrder)
+        }
+        .flowOn(defaultDispatcher)
+        .conflate()
 
     /**
      * Fetch a list of [Plant]s from the database that matches a given [GrowZone].
