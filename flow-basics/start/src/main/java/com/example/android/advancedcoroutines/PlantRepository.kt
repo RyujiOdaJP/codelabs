@@ -16,13 +16,16 @@
 
 package com.example.android.advancedcoroutines
 
+import androidx.annotation.AnyThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import com.example.android.advancedcoroutines.util.CacheOnSuccess
 import com.example.android.advancedcoroutines.utils.ComparablePair
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Repository module for handling data operations.
@@ -49,6 +52,8 @@ class PlantRepository private constructor(
      * Returns a LiveData-wrapped List of Plants.
      */
     val plants: LiveData<List<Plant>> = liveData {
+        // If any of the suspend function calls fail,
+        // the entire block is canceled and not restarted, which helps avoid leaks.
         val plantsLiveData = plantDao.getPlants()
         val customSortOrder = plantsListSortOrderCache.getOrAwait()
         emitSource(plantsLiveData.map {
@@ -60,13 +65,13 @@ class PlantRepository private constructor(
      * Fetch a list of [Plant]s from the database that matches a given [GrowZone].
      * Returns a LiveData-wrapped List of Plants.
      */
-    fun getPlantsWithGrowZone(growZone: GrowZone): LiveData<List<Plant>> = liveData {
-        val plantsWithGrowZone = plantDao.getPlantsWithGrowZoneNumber(growZone.number)
-        val customSortOrder = plantsListSortOrderCache.getOrAwait()
-        emitSource(plantsWithGrowZone.map {
-            it.applySort(customSortOrder)
-        })
-    }
+    fun getPlantsWithGrowZone(growZone: GrowZone): LiveData<List<Plant>> =
+        plantDao.getPlantsWithGrowZoneNumber(growZone.number).switchMap {
+            liveData {
+                val customSortOrder = plantsListSortOrderCache.getOrAwait()
+                emit(it.applyMainSafeSort(customSortOrder))
+            }
+        }
 
     /**
      * Returns true if we should make a network request.
@@ -86,6 +91,12 @@ class PlantRepository private constructor(
                 if (order > -1) order else Int.MAX_VALUE
             }
             ComparablePair(positionForItem, plant.name)
+        }
+
+    @AnyThread
+    suspend fun List<Plant>.applyMainSafeSort(customSortOrder: List<String>): List<Plant> =
+        withContext(defaultDispatcher) {
+            this@applyMainSafeSort.applySort(customSortOrder)
         }
 
     /**
