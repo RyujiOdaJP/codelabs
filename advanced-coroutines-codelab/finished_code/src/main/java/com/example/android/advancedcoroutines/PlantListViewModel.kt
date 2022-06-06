@@ -16,16 +16,30 @@
 
 package com.example.android.advancedcoroutines
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
  * The [ViewModel] for fetching a list of [Plant]s.
+ *
+ * The @ExperimentalCoroutinesApi and @FlowPreview indicate that experimental APIs are being used.
  */
+@ExperimentalCoroutinesApi
+@FlowPreview
 class PlantListViewModel internal constructor(
     private val plantRepository: PlantRepository
 ) : ViewModel() {
@@ -47,7 +61,6 @@ class PlantListViewModel internal constructor(
         get() = _snackbar
 
     private val _spinner = MutableLiveData<Boolean>(false)
-
     /**
      * Show a loading spinner if true
      */
@@ -70,19 +83,36 @@ class PlantListViewModel internal constructor(
         }
     }
 
-    private val growZoneFlow: MutableStateFlow<GrowZone> = MutableStateFlow(NoGrowZone)
+    /**
+     * The current growZone selection (flow version)
+     */
+    private val growZoneFlow = MutableStateFlow<GrowZone>(NoGrowZone)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val plantsUsingFlow: LiveData<List<Plant>> = growZoneFlow.flatMapLatest {
-        if (it == NoGrowZone) plantRepository.plantsFlow
-        else plantRepository.getPlantsWithGrowZoneFlow(it)
-    }.asLiveData()
+    /**
+     * A list of plants that updates based on the current filter (flow version)
+     */
+    val plantsUsingFlow: LiveData<List<Plant>> = growZoneFlow.flatMapLatest { growZone ->
+            if (growZone == NoGrowZone) {
+                plantRepository.plantsFlow
+            } else {
+                plantRepository.getPlantsWithGrowZoneFlow(growZone)
+            }
+        }.asLiveData()
 
     init {
-        // When creating a new ViewModel, clear the grow zone and perform any related udpates
         clearGrowZoneNumber()
 
-        launchDataLoad { plantRepository.tryUpdateRecentPlantsCache() }
+        growZoneFlow.mapLatest { growZone ->
+                _spinner.value = true
+                if (growZone == NoGrowZone) {
+                    plantRepository.tryUpdateRecentPlantsCache()
+                } else {
+                    plantRepository.tryUpdateRecentPlantsForGrowZoneCache(growZone)
+                }
+            }
+            .onEach { _spinner.value = false }
+            .catch { throwable ->  _snackbar.value = throwable.message  }
+            .launchIn(viewModelScope)
     }
 
     /**
@@ -94,9 +124,6 @@ class PlantListViewModel internal constructor(
     fun setGrowZoneNumber(num: Int) {
         growZone.value = GrowZone(num)
         growZoneFlow.value = GrowZone(num)
-
-        // initial code version, will move during flow rewrite
-        launchDataLoad { plantRepository.tryUpdateRecentPlantsForGrowZoneCache(GrowZone(num)) }
     }
 
     /**
@@ -108,9 +135,6 @@ class PlantListViewModel internal constructor(
     fun clearGrowZoneNumber() {
         growZone.value = NoGrowZone
         growZoneFlow.value = NoGrowZone
-
-        // initial code version, will move during flow rewrite
-        launchDataLoad { plantRepository.tryUpdateRecentPlantsCache() }
     }
 
     /**
