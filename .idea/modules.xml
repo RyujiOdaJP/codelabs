@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/codelabs.iml" filepath="$PROJECT_DIR$/.idea/codelabs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FloeAndLiveData.iml" filepath="$PROJECT_DIR$/.idea/modules/FloeAndLiveData.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/FloeAndLiveData.app.unitTest.iml" />
     </modules>
   </component>
 </project>
