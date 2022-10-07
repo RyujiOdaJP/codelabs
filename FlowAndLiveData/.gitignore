@@ -1,0 +1,15 @@
+*.iml
+../flow-basics/.gradle
+/local.properties
+/FlowAndLiveData/.idea/caches
+/FlowAndLiveData/.idea/libraries
+/FlowAndLiveData/.idea/modules.xml
+/FlowAndLiveData/.idea/workspace.xml
+/FlowAndLiveData/.idea/navEditor.xml
+/FlowAndLiveData/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
