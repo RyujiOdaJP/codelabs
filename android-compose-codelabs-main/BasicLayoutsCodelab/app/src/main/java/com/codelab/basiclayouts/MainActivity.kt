@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -38,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codelab.basiclayouts.ui.theme.MySootheTheme
 import com.codelab.basiclayouts.ui.theme.shapes
+import com.codelab.basiclayouts.ui.theme.typography
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +79,9 @@ fun SearchBar(
 fun AlignYourBodyElement(
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier) {
         Image(
             painter = painterResource(id = R.drawable.ab1_inversions),
             contentDescription = "inversion",
@@ -85,7 +89,12 @@ fun AlignYourBodyElement(
             modifier = Modifier
                 .size(88.dp)
                 .clip(CircleShape)
-
+                .padding(bottom = 8.dp)
+        )
+        Text(
+            text = stringResource(R.string.ab1_inversions),
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
     }
 }
