@@ -24,6 +24,9 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -115,7 +118,8 @@ fun FavoriteCollectionCard(
     ) {
         Row(
             modifier = Modifier
-                .width(192.dp),
+                .width(192.dp)
+                .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -157,6 +161,16 @@ fun FavoriteCollectionsGrid(
     modifier: Modifier = Modifier
 ) {
     // Implement composable here
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        modifier = modifier.wrapContentHeight()
+            .heightIn(max = 120.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(favoriteCollectionsData) { item ->
+            FavoriteCollectionCard(stringRes = item.text, drawable = item.drawable)
+        }
+    }
 }
 
 // Step: Home section - Slot APIs
