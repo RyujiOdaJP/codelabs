@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,8 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codelab.basiclayouts.ui.theme.MySootheTheme
-import com.codelab.basiclayouts.ui.theme.shapes
-import com.codelab.basiclayouts.ui.theme.typography
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,26 +74,28 @@ fun SearchBar(
 // Step: Align your body - Alignment
 @Composable
 fun AlignYourBodyElement(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    @StringRes stringRes: Int,
+    @DrawableRes drawable: Int
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier) {
         Image(
-            painter = painterResource(id = R.drawable.ab1_inversions),
+            painter = painterResource(id = drawable),
             contentDescription = "inversion",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(88.dp)
                 .clip(CircleShape)
-                .padding(bottom = 8.dp)
         )
         Text(
-            text = stringResource(R.string.ab1_inversions),
+            text = stringResource(stringRes),
             style = MaterialTheme.typography.h3,
-            modifier = Modifier.padding(bottom = 8.dp)
+            //テキストのベースラインとは、文字が「乗っている」ラインのこと
+            modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp)
         )
-    }
+    }   
 }
 
 // Step: Favorite collection card - Material Surface
@@ -183,7 +182,9 @@ fun SearchBarPreview() {
 fun AlignYourBodyElementPreview() {
     MySootheTheme {
         AlignYourBodyElement(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
+            drawable = R.drawable.ab1_inversions,
+            stringRes = R.string.ab1_inversions
         )
     }
 }
