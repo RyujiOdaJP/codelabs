@@ -24,6 +24,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codelab.basiclayouts.ui.theme.MySootheTheme
+import com.codelab.basiclayouts.ui.theme.shapes
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +65,7 @@ fun SearchBar(
             )
         },
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor =  MaterialTheme.colors.surface
+            backgroundColor = MaterialTheme.colors.surface
         ),
         placeholder = {
             Text(stringResource(id = R.string.placeholder_search))
@@ -80,7 +82,8 @@ fun AlignYourBodyElement(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier) {
+        modifier = modifier
+    ) {
         Image(
             painter = painterResource(id = drawable),
             contentDescription = "inversion",
@@ -95,15 +98,40 @@ fun AlignYourBodyElement(
             //テキストのベースラインとは、文字が「乗っている」ラインのこと
             modifier = Modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp)
         )
-    }   
+    }
 }
 
 // Step: Favorite collection card - Material Surface
 @Composable
 fun FavoriteCollectionCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    @StringRes stringRes: Int,
+    @DrawableRes drawable: Int
 ) {
     // Implement composable here
+    Surface(
+        shape = MaterialTheme.shapes.small,
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier
+                .width(192.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(56.dp),
+                contentScale = ContentScale.Crop,
+                painter = painterResource(id = drawable),
+                contentDescription = "favorite collection"
+            )
+            Text(
+                text = stringResource(id = stringRes),
+                style = MaterialTheme.typography.h3,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+    }
 }
 
 // Step: Align your body row - Arrangements
@@ -194,7 +222,9 @@ fun AlignYourBodyElementPreview() {
 fun FavoriteCollectionCardPreview() {
     MySootheTheme {
         FavoriteCollectionCard(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
+            drawable = R.drawable.fc2_nature_meditations,
+            stringRes = R.string.fc2_nature_meditations
         )
     }
 }
