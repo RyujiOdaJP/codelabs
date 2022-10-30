@@ -31,7 +31,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -184,7 +186,12 @@ fun HomeSection(
 ) {
     // Implement composable here
     Column(modifier) {
-        Text(stringResource(title).uppercase(Locale.getDefault()))
+        Text(
+            text = stringResource(title).uppercase(Locale.getDefault()),
+            style = MaterialTheme.typography.h2,
+            modifier = modifier.paddingFromBaseline(top = 40.dp, bottom = 8.dp)
+                .padding(horizontal = 16.dp)
+        )
         content()
     }
 }
@@ -210,12 +217,38 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
     // Implement composable here
+    BottomNavigation(modifier = modifier, backgroundColor = MaterialTheme.colors.background) {
+        BottomNavigationItem(
+            icon = {
+                Icon(imageVector = Icons.Default.Spa, contentDescription = "spa")
+            },
+            selected = true,
+            label = {
+                    Text(stringResource(R.string.bottom_navigation_home))
+            },
+            onClick = { /*TODO*/ })
+        BottomNavigationItem(
+            icon = {
+                Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "spa")
+            },
+            selected = false,
+            label = {
+                Text(stringResource(R.string.bottom_navigation_profile))
+            },
+            onClick = { /*TODO*/ }
+        )
+    }
 }
 
 // Step: MySoothe App - Scaffold
 @Composable
 fun MySootheApp() {
     // Implement composable here
+    MySootheTheme() {
+        Scaffold(bottomBar = { SootheBottomNavigation() }) { padding ->
+            HomeScreen(modifier = Modifier.padding(padding))
+        }
+    }
 }
 
 private val alignYourBodyData = listOf(
