@@ -15,6 +15,8 @@
  */
 package com.codelabs.state
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 
@@ -34,7 +36,7 @@ class WellnessViewModel : ViewModel() {
 
     fun changeTaskChecked(item: WellnessTask, checked: Boolean) =
         tasks.find { it.id == item.id }?.let { task ->
-            task.checked = checked
+            task.checked.value = checked
         }
 }
 
